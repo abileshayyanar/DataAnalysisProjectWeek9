@@ -1,0 +1,32 @@
+---
+name: Abilesh Ayyanar
+title: "Data Analyst: Cross Selling"
+output: html_notebook
+---
+
+There are many NA values in the gross income column, so this line removes those rows and puts the new dataset in a file called RealData:
+```{r}
+RealData <- na.omit(Test)
+```
+
+There are many outliers in the age column and in the customer seniority column, so to remove them, some variables must be defined:
+```{r}
+QAge = quantile(Test$age, probs=c(.25, .75), na.rm =)
+QSen = quantile(Test$antiguedad, probs=c(.25, .75), na.rm =)
+               
+iqrAge <- IQR(Test$age)
+iqrSen <- IQR(Test$antiguedad)
+```
+
+Create a temporary dataset to hold the values after removing the age outliers:
+```{r}
+TempDataSet <- subset(RealData, RealData$age > (QAge[1] - 1.5*iqrAge) & RealData$age < (QAge[2]+1.5*iqrAge))
+```
+
+Use that dataset as a base and remove all seniority outliers:
+```{r}
+RealData <- subset(TempDataSet, TempDataSet$antiguedad > (QSen[1] - 1.5*iqrSen) & TempDataSet$antiguedad < (QSen[2]+1.5*iqrSen))
+```
+
+You are left with a dataset called RealData that contains no NA values and no outliers in the age and seniority categories.
+
